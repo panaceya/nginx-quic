@@ -1,0 +1,37 @@
+name: Docker Image CI
+
+on:
+  push:
+    tags: ["*"]
+    branches:
+      - "main"
+  pull_request:
+    tags: ["*"]
+    branches:
+      - "main"
+
+env:
+  # Hostname of your registry
+  REGISTRY: docker.io
+  # Image repository, without hostname and tag
+  IMAGE_NAME: ${{ github.repository }}
+  SHA: ${{ github.event.pull_request.head.sha || github.event.after }}
+
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+   
+    - name: Build Nginx QUIC on ubuntu 18.04
+      run: docker build ./Ubuntu/18.04 --file ./Ubuntu/18.04/Dockerfile --tag nginx-quic:ubuntu-18.04-$(date +%s)
+
+    - name: Build Nginx QUIC on ubuntu 20.04
+      run: docker build ./Ubuntu/20.04 --file ./Ubuntu/20.04/Dockerfile --tag nginx-quic:ubuntu-20.04-$(date +%s)
+
+    - name: Build Nginx QUIC on ubuntu 22.04
+      run: docker build ./Ubuntu/22.04 --file ./Ubuntu/22.04/Dockerfile --tag nginx-quic:ubuntu-22.04-$(date +%s)
